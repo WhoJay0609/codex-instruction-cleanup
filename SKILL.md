@@ -1,6 +1,6 @@
 ---
 name: agent-env-cleanup
-description: 审计并在明确授权范围内精简 AGENTS.md、技能描述及其引用，适用于模型升级后的指令环境去冗余；默认仅审计当前项目。
+description: Audit Codex AGENTS.md and Skills for duplicate or conflicting instructions; apply scoped cleanup when requested.
 ---
 
 # Agent 环境清理
