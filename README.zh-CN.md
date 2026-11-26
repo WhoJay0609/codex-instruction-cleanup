@@ -33,12 +33,17 @@ cd codex-instruction-cleanup
 
 ## 本地安装
 
-请在仓库根目录执行。以下命令适用于使用 GNU coreutils 的 Linux；`ln -sT` 是 GNU 形式。GNU `ln` 在目标已存在（包括悬空符号链接）时会失败，不会覆盖。
+请在仓库根目录执行（兼容 Linux 和 macOS）。命令会先检查目标路径是否已存在文件或符号链接（包括悬空符号链接），避免覆盖已有目标。
 
 ```bash
 codex_skill_dir="${CODEX_HOME:-$HOME/.codex}/skills"
 mkdir -p "$codex_skill_dir"
-ln -sT -- "$PWD" "$codex_skill_dir/agent-env-cleanup"
+skill_link="$codex_skill_dir/agent-env-cleanup"
+if [ -e "$skill_link" ] || [ -L "$skill_link" ]; then
+  printf 'Refusing to replace existing %s\n' "$skill_link" >&2
+  exit 1
+fi
+ln -s -- "$PWD" "$skill_link"
 ```
 
 `CODEX_HOME` 控制目标目录；未设置时使用 `~/.codex`。安装后任务没有列出该技能时，可开启新任务，或让代理直接读取本仓库的 `SKILL.md`。

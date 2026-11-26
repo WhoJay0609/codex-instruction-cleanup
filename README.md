@@ -33,12 +33,17 @@ Continue with the local installation command below. It creates a symlink and doe
 
 ## Install locally
 
-Run this from the repository root. The command is for Linux with GNU coreutils; `ln -sT` is the GNU form. GNU `ln` fails when the target exists, including a dangling symlink, instead of overwriting it.
+Run this from the repository root (works on Linux and macOS). It checks for an existing file or symlink (including a dangling symlink) before creating the link so it never overwrites an existing destination.
 
 ```bash
 codex_skill_dir="${CODEX_HOME:-$HOME/.codex}/skills"
 mkdir -p "$codex_skill_dir"
-ln -sT -- "$PWD" "$codex_skill_dir/agent-env-cleanup"
+skill_link="$codex_skill_dir/agent-env-cleanup"
+if [ -e "$skill_link" ] || [ -L "$skill_link" ]; then
+  printf 'Refusing to replace existing %s\n' "$skill_link" >&2
+  exit 1
+fi
+ln -s -- "$PWD" "$skill_link"
 ```
 
 The `CODEX_HOME` value controls the destination; when it is unset, the command uses `~/.codex`. If a task does not list the skill after installation, start a new task or point the agent to this repository's `SKILL.md`.
